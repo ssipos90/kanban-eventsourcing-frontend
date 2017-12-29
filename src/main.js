@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import Vue from 'vue';
 
 import {
   Vuetify,
@@ -11,12 +11,14 @@ import {
   VGrid,
   VToolbar,
   transitions
-} from 'vuetify'
+} from 'vuetify';
 
-import './stylus/app.styl'
+import 'vuetify/src/stylus/app.styl';
 
-import App from './App'
-import router from './router'
+import App from './App';
+import router from './router';
+import store from './store';
+store.dispatch('loginFromStorage');
 
 Vue.use(Vuetify, {
   components: {
@@ -30,14 +32,15 @@ Vue.use(Vuetify, {
     VToolbar,
     transitions
   }
-})
+});
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   template: '<App/>',
   components: { App }
-})
+});
