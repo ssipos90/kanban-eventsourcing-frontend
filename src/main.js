@@ -10,6 +10,12 @@ import {
   VIcon,
   VGrid,
   VToolbar,
+  VCard,
+  VForm,
+  VTextField,
+  VSelect,
+  VCheckbox,
+  VProgressCircular,
   transitions
 } from 'vuetify';
 
@@ -18,7 +24,9 @@ import 'vuetify/src/stylus/app.styl';
 import App from './App';
 import router from './router';
 import store from './store';
-store.dispatch('loginFromStorage');
+store.dispatch('loginFromStorage').catch(e => {
+  console.log(e.message);
+});
 
 Vue.use(Vuetify, {
   components: {
@@ -30,6 +38,12 @@ Vue.use(Vuetify, {
     VIcon,
     VGrid,
     VToolbar,
+    VCard,
+    VForm,
+    VTextField,
+    VSelect,
+    VCheckbox,
+    VProgressCircular,
     transitions
   }
 });

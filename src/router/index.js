@@ -1,16 +1,39 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from '@/components/Home.vue';
+import store from '@/store';
+import Home from '@/pages/Home.vue';
+const Login = () => import('@/pages/Login.vue' /* webpackChunkName: 'login' */);
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
       path: '/',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
+      beforeEnter: (to, from, next) => {
+        if (store.getters.isLoggedIn) {
+          next({name: 'home'});
+        } else {
+          next();
+        }
+      }
     }
   ]
 });
+
+router.beforeEach((to, from, next) => {
+  if (!store.getters['isLoggedIn'] && to.name !== 'login') {
+    return next({name: 'login'});
+  }
+  next();
+});
+
+export default router;
