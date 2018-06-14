@@ -16,6 +16,7 @@ import {
   VSelect,
   VCheckbox,
   VProgressCircular,
+  VSnackbar,
   transitions
 } from 'vuetify';
 
@@ -24,6 +25,7 @@ import 'vuetify/src/stylus/app.styl';
 import App from './App';
 import router from './router';
 import store from './store';
+
 store.dispatch('loginFromStorage').catch(e => {
   console.log(e.message);
 });
@@ -44,6 +46,7 @@ Vue.use(Vuetify, {
     VSelect,
     VCheckbox,
     VProgressCircular,
+    VSnackbar,
     transitions
   }
 });

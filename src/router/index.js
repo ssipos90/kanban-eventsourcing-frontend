@@ -12,7 +12,14 @@ const router = new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      children: [
+        {
+          path: 'projects',
+          component: undefined,
+          name: 'projects'
+        }
+      ]
     },
     {
       path: '/login',

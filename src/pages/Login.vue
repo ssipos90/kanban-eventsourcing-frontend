@@ -18,17 +18,17 @@
                     <v-card-text>
                         <v-text-field
                                 label="Name"
-                                v-model="username.value"
-                                :rules="username.rules"
-                                :error-messages="username.errors"
+                                v-model="fields.username.value"
+                                :rules="fields.username.rules"
+                                :error-messages="fields.username.errors"
                                 required
                         ></v-text-field>
                         <v-text-field
                                 label="Password"
                                 type="password"
-                                v-model="password.value"
-                                :rules="password.rules"
-                                :error-messages="username.errors"
+                                v-model="fields.password.value"
+                                :rules="fields.password.rules"
+                                :error-messages="fields.password.errors"
                                 required
                         ></v-text-field>
                     </v-card-text>
@@ -40,6 +40,7 @@
                                 :loading="loading"
                         >Login
                         </v-btn>
+                        error message?
                     </v-card-actions>
                 </v-card>
             </v-form>
@@ -48,53 +49,59 @@
 </template>
 <script>
   import {mapActions} from 'vuex';
-  import {ValidationError, ServiceError} from '@/api';
+  import Api from '@/Api.js';
 
   export default {
     data() {
       return {
         valid: true,
         loading: false,
-        username: {
-          value: '',
-          rules: [
-            v => !!v || 'Name is required',
-            v => (v && v.length <= 10) || 'Name must be less than 10 characters'
-          ],
-          errors: []
-        },
-        password: {
-          value: '',
-          rules: [
-            v => !!v || 'Password is required',
-            v => (v && v.length >= 10) || 'Password must be at least 6 characters'
-          ],
-          errors: []
+        fields: {
+
+          username: {
+            value: '',
+            rules: [
+              v => !!v || 'Name is required',
+              v => (v && v.length <= 10) || 'Name must be less than 10 characters'
+            ],
+            errors: []
+          },
+          password: {
+            value: '',
+            rules: [
+              v => !!v || 'Password is required',
+              v => (v && v.length >= 10) || 'Password must be at least 6 characters'
+            ],
+            errors: []
+          }
         }
       };
     },
+    mixins: [Api],
     methods: {
-      ...mapActions(['login']),
+      ...mapActions(['login', 'errorMessage']),
       submit() {
         this.loading = true;
-        this.username.errors = [];
-        this.password.errors = [];
-        this
-          .login({
-            username: this.username.value,
-            password: this.password.value
-          })
-          .catch(e => {
-            console.log(e);
-            if (e instanceof ValidationError) {
-              // TODO do the cha cha
-            } else if (e instanceof ServiceError) {
+        this.resetFieldErrors();
 
+        this
+          .login(this.fieldsData())
+          .then(({data, ok, status, statusText}) => {
+            if (status === 422) {
+              this.handleValidationErrors(data);
+            } else {
+              this.handleResponseError(data, status, statusText);
             }
-            this.username.errors = [];
-            this.password.errors = [];
           })
-          .then(() => {
+          .catch(error => {
+            console.log(error);
+            if (error instanceof TypeError) {
+              // failed connecting to server
+            } else {
+              // failed decoding json
+            }
+          })
+          .finally(() => {
             this.loading = false;
           });
       }
